@@ -71,4 +71,4 @@ Since we anticipate billions of rows to be created and there is no relationship 
 - what if parts of the URL are URL encoded. they remain identical except for the URL encoding
 - **Solution** : We can append the incrementing sequence number to the URLs to generate the short URL. However, this becomes an ever increasing number and the performance of the service reduces
 - Another solution is to append the user_id to generate the short key. However if the user is not signed in then we may have to ask the user to choose the uniqueness key.Even after this if there is a duplication we have to keep generating the keys till a unique key is returned.
-
+![](images/TinyURL_encoding_decoding_messages.svg)
