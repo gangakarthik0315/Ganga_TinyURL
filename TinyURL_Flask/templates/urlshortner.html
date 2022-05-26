@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>URL Shortner</title>
+	</head>
+	<body>
+		<h1>URL Shortner</h1>
+		<form action = "/send" method = "POST">
+			<label> Full Link:    </label>
+			<input type = "text" name = "full_link" />
+		<br/>
+		<br/>
+			<input type = "submit" value = "Generate">
+		<br/>
+		<br/>
+			<label>Short URL: </label> <a href={{full_url}} target="_blank">{{short_url}}</a>
+		</form>
+	</body>
+</html>
