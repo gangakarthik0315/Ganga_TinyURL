@@ -23,6 +23,7 @@
 - Handy Formula : 1 month = 2.5 million seconds therefore, 1B transactions/month = 400 requests/s
 - Our service is read heavy compared to write as, there will be many URL redirections than URL creations.
 - Lets assume the read:write ration is 100:1
+
 ### Number of read and write requests per second:
 - Lets assume there are 100M URL creation requests per month i.e., 100M / (30 * 24 * 3600s) = 40 URLS/s
 - number of URL redirections = 40 * 100 = 4K URLS/s
@@ -55,17 +56,19 @@
 
 Since we anticipate billions of rows to be created and there is no relationship between the objects a NoSQL db is a better choice which can also be easily scaled.
 
-## Fault tolerance:
-- content here
+## Basic System Design and Algoritm.
+- The basic requirement of our sytem is to generate a short and unique key for the given URL.
 
-## Scalability:
-- content here
-
-## Data partitioning (sharding):
-- content here
-
-## Archtiecture Diagram:
-- Diagram here
-
-
+### Encoding a given URL:
+- We can use a MD5 or SHA256 encoding algorithm as our hash function to generate a unique hash. The hash is then encoded to display.
+- We can use base36[a-z 0-9] or base62[A-Z a-z 0-9] with few special characters like + and / we can use base64
+- There are 4K * 3600s * 24hr * 365days * 5yr requests for the 5 yrs approx = 630B requests.
+- If we use base64 encoding with 7 chars of short_key length we get approx 4 triilion unique keys which can easily suffice our request.
+- If we use MD5 encoding algo it will return 128 bit has which then encoded will return more than 17 chars key.
+- We can use the first 7 chars but it might cause duplication issue.
+- There are a couple of issues with this approach.
+- What if multiple users enter the same URL, all of them get the same short URL which is not acceptable
+- what if parts of the URL are URL encoded. they remain identical except for the URL encoding
+- **Solution** : We can append the incrementing sequence number to the URLs to generate the short URL. However, this becomes an ever increasing number and the performance of the service reduces
+- Another solution is to append the user_id to generate the short key. However if the user is not signed in then we may have to ask the user to choose the uniqueness key.Even after this if there is a duplication we have to keep generating the keys till a unique key is returned.
 
