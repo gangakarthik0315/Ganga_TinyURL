@@ -7,7 +7,6 @@
 - The service should be able to provide short link to the long URL.
 - On accessing the short link the service should redirect to the original link
 - Users can optionally provide the custom short link name
-- length of the short link 
 - Users should be able to provide the expiration time for the short link
 
 ### Non-Functional Requirements:
@@ -56,7 +55,7 @@
 
 Since we anticipate billions of rows to be created and there is no relationship between the objects a NoSQL db is a better choice which can also be easily scaled.
 
-## Basic System Design and Algoritm.
+## Basic System Design and Algorithm.
 - The basic requirement of our sytem is to generate a short and unique key for the given URL.
 
 ### Encoding a given URL:
@@ -72,3 +71,21 @@ Since we anticipate billions of rows to be created and there is no relationship 
 - **Solution** : We can append the incrementing sequence number to the URLs to generate the short URL. However, this becomes an ever increasing number and the performance of the service reduces
 - Another solution is to append the user_id to generate the short key. However if the user is not signed in then we may have to ask the user to choose the uniqueness key.Even after this if there is a duplication we have to keep generating the keys till a unique key is returned.
 ![](images/TinyURL_encoding_decoding_messages.svg)
+
+### Key Generation Service(KGS):
+- KGS can be used to generate unique 7 letter short keys that can be stored in a database namely key-db.
+- This approach is simple, fast and can eliminate duplication.
+- The key-db will have two tables one for the available keys and one for the used keys. When a key is assigned to a requesting server it will be moved from available to moved table.
+- When multiple servers are accessing the same key concurrently then KGS has to synchronize the data structure used to save the keys(like imposing a lock on the key) before removing the key and releasing it to the server.
+- KGS can easily be a single point of failure as a result we have to have a standby replica of the KGS server to take control after the failover
+- size of key db server 7 characters * (64^7) = 30 TB if a modern server has 4TB size then we may have to factor 8 servers for Key DB
+- Each server can cache few keys in its memory to increase the performance
+- **key lookup: **
+- Find the key in the database if found return the "HTTP 302 redirect" status to the browser and place the original URL in the location field of the request. If not found return "HTTP 402 Not Found" status or redirect the user to the home page
+
+## Custom short keys:
+- Users can provide custom short names for the links however, since the purpose is to keep the URLs as short as possible the system should impose restrictions on the length of the custom names like say 10 - 15 letters at the max.
+
+## Data Sharding:
+
+
