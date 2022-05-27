@@ -80,7 +80,7 @@ Since we anticipate billions of rows to be created and there is no relationship 
 - KGS can easily be a single point of failure as a result we have to have a standby replica of the KGS server to take control after the failover
 - size of key db server 7 characters * (64^7) = 30 TB if a modern server has 4TB size then we may have to factor 8 servers for Key DB
 - Each server can cache few keys in its memory to increase the performance
-- **key lookup: **
+- **key lookup**:
 - Find the key in the database if found return the "HTTP 302 redirect" status to the browser and place the original URL in the location field of the request. If not found return "HTTP 402 Not Found" status or redirect the user to the home page
 
 ## Custom short keys:
