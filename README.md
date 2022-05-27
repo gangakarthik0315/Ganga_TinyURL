@@ -1,6 +1,6 @@
 # Ganga_TinyURL
 
-# System Design for TinyURL project:
+# System Design for TinyURL project: https://gangakarthik0315.github.io/Ganga_TinyURL/
 
 ## Requirement gathering (Funcitonal and Non-Functional):
 ### Functional Requirements:
