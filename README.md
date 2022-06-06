@@ -97,7 +97,8 @@ Since we anticipate billions of rows to be created and there is no relationship 
  
 ## Cache:
 - Frequently accessed URLs can be cached for the faster retrieval. We can use any off the shelf solution like memcached which can store full URLs with their hashes. App servers before hitting the backend servers can quickly check if the required URL is in the cache.
-- If we consider caching 20% of the data then as caclucated above we would need 170GB of memory. MOrdern server has aroung 256GB of memory hence a single server can easily fit all the cache. 
+- If we consider 20% of the URLS resulting in 80% of traffic then we can cache 20% of data everyday. 
+- 20% ( 40 * 60 * 60 * 24 * 500) ~= 35GB. If we consider modern servers to have 256GB of memory. We can factor  1 server to fulfill the request.
 - When the cache is full LRU policy can be used as an eviction policy. We can use Linked list or similar data structures to store the URLs and their hashes and can also keep track of which URL is recently accessed.
 - To further increase the efficiency we can replicate the cache server and distribute the load between the servers.
 - If there is cache miss, app servers will contact the backed servers and retrieve the iformation which will then be stored in cache and its replicas.
