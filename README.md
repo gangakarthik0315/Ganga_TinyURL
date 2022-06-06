@@ -87,5 +87,18 @@ Since we anticipate billions of rows to be created and there is no relationship 
 - Users can provide custom short names for the links however, since the purpose is to keep the URLs as short as possible the system should impose restrictions on the length of the custom names like say 10 - 15 letters at the max.
 
 ## Data Sharding:
-
-
+ - We need to effectively partition the data to store in the databases which would allow us to store information of billions of URLs
+ ### Range based partitioning: 
+ - We can partition the data based on the first letter of the hask key or short link. This means all the URLs starting with letter A is stored in one partion and letter B is stored in another partition and so on. We could also combine the less frequently occuring letters into one partition. The downside of this approach is that it will lead to unbalanced DB servers. example: if most of the URLs hash key are starting with the same letter then the DB holding this information will be overloaded.
+ 
+ ### Hash based partitioning:
+ - In this approach we pass the hask key to the hash function which will randomly select a DB and assign the URL to the database.
+ - This function will still lead to overloading the partition which can be solved using consistent hashing.
+ 
+## Cache:
+- Frequently accessed URLs can be cached for the faster retrieval. We can use any off the shelf solution like memcached which can store full URLs with their hashes. App servers before hitting the backend servers can quickly check if the required URL is in the cache.
+- If we consider caching 20% of the data then as caclucated above we would need 170GB of memory. MOrdern server has aroung 256GB of memory hence a single server can easily fit all the cache. 
+- When the cache is full LRU policy can be used as an eviction policy. We can use Linked list or similar data structures to store the URLs and their hashes and can also keep track of which URL is recently accessed.
+- To further increase the efficiency we can replicate the cache server and distribute the load between the servers.
+- If there is cache miss, app servers will contact the backed servers and retrieve the iformation which will then be stored in cache and its replicas.
+![](images/Screenshot 2022-06-06 132916.jpg)
