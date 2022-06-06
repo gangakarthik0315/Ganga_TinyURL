@@ -30,7 +30,7 @@
 ### Storage estimation:
 - Let's assume the average size of the short URL is 500 bytes and we are storing the links for 5 yrs.
 - 100M * 500 * 12 * 5 = 3 TB
-- Let's assume 20% of URLS create 80% traffice then caching 20% of hot URLs allows faster access.
+- Let's assume 20% of URLS create 80% traffic then caching 20% of hot URLs allows faster access.
 - 4K URL/s = 4k * 24 * 3600 * (20%) = 35GB/day
 
 ### Bandwidth estimation:
@@ -40,9 +40,9 @@
 
 ## Define system API (Public and Private endpoints):
 - We can use SOAP or REST APIs to expose the functinality of our service.
-- CreateURL(api_key, original_url, custom_name=None, expiry_date=None, user_name=None)
+ `CreateURL(api_key, original_url, custom_name=None, expiry_date=None, user_name=None)`
 - A successful url creation returns the short_url
-- DeleteURL(api_key,short_url)
+ `DeleteURL(api_key,short_url)`
 - A successful url deletion returns "URL deleted" message
 
 ### service abuse:
@@ -68,7 +68,7 @@ Since we anticipate billions of rows to be created and there is no relationship 
 - There are a couple of issues with this approach.
 - What if multiple users enter the same URL, all of them get the same short URL which is not acceptable
 - what if parts of the URL are URL encoded. they remain identical except for the URL encoding
-- **Solution** : We can append the incrementing sequence number to the URLs to generate the short URL. However, this becomes an ever increasing number and the performance of the service reduces
+**Solution** : We can append the incrementing sequence number to the URLs to generate the short URL. However, this becomes an ever increasing number and the performance of the service reduces
 - Another solution is to append the user_id to generate the short key. However if the user is not signed in then we may have to ask the user to choose the uniqueness key.Even after this if there is a duplication we have to keep generating the keys till a unique key is returned.
 ![](images/TinyURL_encoding_decoding_messages.svg)
 
@@ -88,10 +88,10 @@ Since we anticipate billions of rows to be created and there is no relationship 
 
 ## Data Sharding:
  - We need to effectively partition the data to store in the databases which would allow us to store information of billions of URLs
- ### Range based partitioning: 
+### Range based partitioning: 
  - We can partition the data based on the first letter of the hask key or short link. This means all the URLs starting with letter A is stored in one partion and letter B is stored in another partition and so on. We could also combine the less frequently occuring letters into one partition. The downside of this approach is that it will lead to unbalanced DB servers. example: if most of the URLs hash key are starting with the same letter then the DB holding this information will be overloaded.
  
- ### Hash based partitioning:
+### Hash based partitioning:
  - In this approach we pass the hask key to the hash function which will randomly select a DB and assign the URL to the database.
  - This function will still lead to overloading the partition which can be solved using consistent hashing.
  
