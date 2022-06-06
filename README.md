@@ -112,9 +112,14 @@ Since we anticipate billions of rows to be created and there is no relationship 
  - Another advantage is that if any server dies this will take that server out from the rotation and stop sending traffic to it.
  - However, it will not consider the load of the server into consideration. If the server is heavily loaded or is slow it will still send the traffice. To overcome this we could use a more intelligent LB solution which will keep checking the backend servers for load and adjust traffic based on that.
  
- ## Purging the expired linkes / DB cleanup:
+## Purging the expired linkes / DB cleanup:
  - If we choose to continuously check for the expired links it will put a lot of pressure on the database servers. We could do a lazy dump instead.
  1) When the users request for an expired link, we can delete the link and return error to the user.
  2) A separate cleanup service can run periodically to remove the expired links from the datbase servers and cache.This service should be light and should be scheduled to run only when the user traffice is expected to be low.
  3) After removing the link we can put the key back to the key-db to be reused.
  ![](images/tinyurl.jpg)
+ 
+## Security and Permissions:
+- We can store the permission levels(public/private) of each URL in the database.
+- We can also have a table to store the UserIDs who have the perssion to see a specific URL
+- Since we use NoSQL wide columned db like cassandra the key for the table storing the permissions would be 'hash'. The columns will store the userIDs that have the permissions to see the URL.
