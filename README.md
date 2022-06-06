@@ -102,3 +102,19 @@ Since we anticipate billions of rows to be created and there is no relationship 
 - To further increase the efficiency we can replicate the cache server and distribute the load between the servers.
 - If there is cache miss, app servers will contact the backed servers and retrieve the iformation which will then be stored in cache and its replicas.
 ![](images/Screenshot 2022-06-06 132916.jpg)
+
+## Load Balancing:
+- We can introduce load balancers at three places
+  1) Between users and the application servers
+  2) Between app servers and DB servers
+  3) between app servers and cache servers
+ - We can initially use a simple round robin approach which will equally distribute the load among the servers. This is simple and does not include any overhead.
+ - Another advantage is that if any server dies this will take that server out from the rotation and stop sending traffic to it.
+ - However, it will not consider the load of the server into consideration. If the server is heavily loaded or is slow it will still send the traffice. To overcome this we could use a more intelligent LB solution which will keep checking the backend servers for load and adjust traffic based on that.
+ 
+ ## Purging the expired linkes / DB cleanup:
+ - If we choose to continuously check for the expired links it will put a lot of pressure on the database servers. We could do a lazy dump instead.
+ 1) When the users request for an expired link, we can delete the link and return error to the user.
+ 2) A separate cleanup service can run periodically to remove the expired links from the datbase servers and cache.This service should be light and should be scheduled to run only when the user traffice is expected to be low.
+ 3) After removing the link we can put the key back to the key-db to be reused.
+ ![](images/tinyurl.jpg)
